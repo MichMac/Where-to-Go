@@ -8,7 +8,7 @@ Funkcjonalności:
 - Wybór obszaru wyszukiwania kategorii (z aktualnej pozycji lub innej wybranej).
 - Ustawienie zakresu wyszukiwania wybranej kategorii.
 - Opis miejsc.
-- "Ogólna" kategorycacja miejsc.
+- "Ogólna" kategoryzacja miejsc.
 
 
 Dodatkowe funkcjonalności:
