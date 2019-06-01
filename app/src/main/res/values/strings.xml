@@ -2,4 +2,5 @@
     <string name="google_map_api_key">AIzaSyC6NQqRmOmvrUcvh_wbvTkXmb6LRMifxMA</string>
     <string name="app_name">WhereToGo</string>
     <string name="title_activity_maps">Map</string>
+    <string name="option_name">Opcje</string>
 </resources>

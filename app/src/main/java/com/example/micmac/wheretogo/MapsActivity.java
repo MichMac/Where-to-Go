@@ -1,7 +1,9 @@
 package com.example.micmac.wheretogo;
 
 import android.Manifest;
+import android.app.VoiceInteractor;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
 import android.location.Geocoder;
@@ -14,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -37,10 +40,11 @@ import com.google.android.gms.tasks.Task;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback{
 
+    private Location currentLocation;
     private GoogleMap mMap;
-    LocationManager locationManager;
+    private LocationManager locationManager;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
-    Marker marker;
+    private Marker marker;
     android.location.LocationListener locationListener;
 
     @Override
@@ -52,30 +56,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        { ActivityCompat.requestPermissions(this, new String[]
-                {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+        if (ActivityCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            { ActivityCompat.requestPermissions(this, new String[]
+                    {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+
+
         }
 
         locationListener = new android.location.LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-                //get the location name from latitude and longitude
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        //double latitude = location.getLatitude();
+                        //double longitude = location.getLongitude();
+                        currentLocation = location;
+                        //get the location name from latitude and longitude
 
-                LatLng latLng = new LatLng(latitude, longitude);
-                if (marker != null){
-                    marker.remove();
-                    marker = mMap.addMarker(new MarkerOptions().position(latLng));
-                    mMap.setMaxZoomPreference(20);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
-                }
-                else{
-                    marker = mMap.addMarker(new MarkerOptions().position(latLng));
-                    mMap.setMaxZoomPreference(20);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
-                }
+                        LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                        if (marker != null){
+                            marker.remove();
+                            marker = mMap.addMarker(new MarkerOptions().position(latLng));
+                            mMap.setMaxZoomPreference(20);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+                        }
+                        else{
+                            marker = mMap.addMarker(new MarkerOptions().position(latLng));
+                            mMap.setMaxZoomPreference(20);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
+                        }
 
 
             }
@@ -87,7 +94,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onProviderEnabled(String provider) {
-
+                Toast.makeText(MapsActivity.this,"Lokalizacja jest wlaczona",Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -97,6 +104,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+
     }
 
 
@@ -112,4 +121,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onStop();
         locationManager.removeUpdates(locationListener);
     }
+
 }
